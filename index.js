@@ -2,6 +2,7 @@ require('dotenv').config({ path: '.env' });
 const express = require('express');
 const { createClient } = require('@supabase/supabase-js');
 const cors = require('cors');
+const path = require("path");
 
 // Debugging: Verificar variables de entorno
 console.log('=== ENV VARIABLES ===');
@@ -27,6 +28,17 @@ app.use((req, res, next) => {
   console.log(`${new Date().toISOString()} - ${req.method} ${req.originalUrl}`);
   next();
 });
+
+
+
+// Servir archivos estáticos desde la carpeta "src"
+app.use(express.static(path.join(__dirname, "src")));
+
+// Ruta principal para servir "index.html"
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "cliente.html"));
+})
+
 
 // Ruta de prueba mejorada
 app.get('/test', async (req, res) => {
