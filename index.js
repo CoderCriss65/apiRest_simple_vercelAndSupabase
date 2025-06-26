@@ -7,7 +7,7 @@ const cors = require('cors');
 console.log('=== ENV VARIABLES ===');
 console.log('SUPABASE_URL:', process.env.SUPABASE_URL || 'UNDEFINED!');
 console.log('SUPABASE_KEY:', process.env.SUPABASE_KEY ? '*** Exists ***' : 'MISSING!');
-console.log('PORT:', process.env.PORT || 88);
+console.log('PORT:', process.env.PORT || 80);
 
 // Verificar credenciales de Supabase
 if (!process.env.SUPABASE_URL || !process.env.SUPABASE_KEY) {

@@ -1,0 +1,1273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Empleados</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --primary-dark: #3f37c9;
+            --secondary: #7209b7;
+            --accent: #f72585;
+            --success: #4cc9f0;
+            --dark: #2b2d42;
+            --darker: #1a1c2c;
+            --light: #f8f9fa;
+            --gray: #8d99ae;
+            --light-gray: #e9ecef;
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.15);
+            --radius: 16px;
+            --radius-small: 10px;
+            --radius-full: 50px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7ff 0%, #f0f2ff 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Menú Lateral */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, var(--darker), var(--dark));
+            color: white;
+            height: 100vh;
+            position: fixed;
+            transition: var(--transition);
+            z-index: 100;
+            overflow-y: auto;
+            box-shadow: var(--shadow);
+            padding: 25px 0;
+        }
+
+        .sidebar-header {
+            padding: 0 25px 25px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-left: 15px;
+            background: linear-gradient(to right, var(--primary-light), var(--success));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sidebar-logo {
+            width: 48px;
+            height: 48px;
+            background: white;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.4rem;
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        .nav-links {
+            padding: 25px 0;
+        }
+
+        .nav-item {
+            padding: 16px 30px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            margin: 5px 15px;
+            border-radius: var(--radius-small);
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.12);
+            box-shadow: inset 3px 0 0 var(--primary);
+        }
+
+        .nav-item i {
+            font-size: 1.3rem;
+            margin-right: 15px;
+            width: 24px;
+            text-align: center;
+            color: var(--primary-light);
+        }
+
+        .nav-item span {
+            font-weight: 500;
+            font-size: 1.05rem;
+        }
+
+        /* Contenido Principal */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            padding: 40px;
+            transition: var(--transition);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .header h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+            background: linear-gradient(to right, var(--dark), var(--primary-dark));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border-radius: var(--radius-small);
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+            box-shadow: var(--shadow);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary), var(--primary-light));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+        }
+
+        .btn-secondary {
+            background: linear-gradient(to right, var(--secondary), #9d4edd);
+            color: white;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            border-radius: var(--radius-full);
+            box-shadow: var(--shadow);
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(to right, var(--primary), var(--success));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+
+        .user-info {
+            line-height: 1.4;
+        }
+
+        .user-name {
+            font-weight: 600;
+        }
+
+        .user-role {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        /* Tarjetas de Dashboard */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+        }
+
+        .card-employees::before {
+            background: linear-gradient(to bottom, var(--primary), var(--primary-light));
+        }
+
+        .card-positions::before {
+            background: linear-gradient(to bottom, var(--success), #3a86ff);
+        }
+
+        .card-salary::before {
+            background: linear-gradient(to bottom, var(--accent), #ff6b6b);
+        }
+
+        .card-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 25px;
+            color: white;
+        }
+
+        .card-employees .card-icon {
+            background: linear-gradient(to right, var(--primary), var(--primary-light));
+        }
+
+        .card-positions .card-icon {
+            background: linear-gradient(to right, var(--success), #3a86ff);
+        }
+
+        .card-salary .card-icon {
+            background: linear-gradient(to right, var(--accent), #ff6b6b);
+        }
+
+        .card h3 {
+            font-size: 1.1rem;
+            color: var(--gray);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .card .value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            background: linear-gradient(to right, var(--dark), var(--primary-dark));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card .trend {
+            font-size: 0.95rem;
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .trend.up {
+            color: #4ade80;
+        }
+
+        .trend.down {
+            color: #f87171;
+        }
+
+        /* Tabla de Empleados */
+        .section {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 35px;
+            margin-bottom: 40px;
+            animation: fadeIn 0.6s ease;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.7rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .btn-sm {
+            padding: 12px 25px;
+            font-size: 1rem;
+            border-radius: var(--radius-small);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: var(--radius-small);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            background: white;
+            border-radius: var(--radius-small);
+            overflow: hidden;
+        }
+
+        thead {
+            background: linear-gradient(to right, var(--primary), var(--primary-light));
+            color: white;
+        }
+
+        th, td {
+            padding: 18px 24px;
+            text-align: left;
+        }
+
+        th {
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        tbody tr {
+            transition: var(--transition);
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        tbody tr:hover {
+            background: rgba(67, 97, 238, 0.05);
+            transform: translateX(5px);
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .action-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.12);
+        }
+
+        .edit-btn {
+            background: white;
+            color: var(--primary);
+            border: 1px solid var(--light-gray);
+        }
+
+        .edit-btn:hover {
+            background: rgba(67, 97, 238, 0.1);
+        }
+
+        .delete-btn {
+            background: white;
+            color: var(--accent);
+            border: 1px solid var(--light-gray);
+        }
+
+        .delete-btn:hover {
+            background: rgba(247, 37, 133, 0.1);
+        }
+
+        /* Modales */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: all 0.4s ease;
+        }
+
+        .modal.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+            z-index: 10;
+            transform: translateY(30px);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .modal.active .modal-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .modal-header {
+            padding: 25px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .modal-header h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--primary-light));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .close-modal {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            background: var(--light-gray);
+            color: var(--dark);
+            transition: var(--transition);
+            font-size: 1.2rem;
+        }
+
+        .close-modal:hover {
+            background: var(--primary);
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        /* Formularios */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 16px 20px;
+            border: 1px solid #ddd;
+            border-radius: var(--radius-small);
+            font-size: 1.05rem;
+            transition: var(--transition);
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(67, 97, 238, 0.2);
+        }
+
+        .form-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn-cancel {
+            background: var(--light-gray);
+            color: var(--dark);
+        }
+
+        .btn-cancel:hover {
+            background: #dee2e6;
+        }
+
+        /* Animaciones de carga */
+        .loading {
+            display: flex;
+            justify-content: center;
+            padding: 50px;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(67, 97, 238, 0.2);
+            border-top: 5px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Notificaciones */
+        .notification {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            padding: 20px 30px;
+            border-radius: var(--radius-small);
+            color: white;
+            font-weight: 500;
+            box-shadow: var(--shadow-hover);
+            transform: translateX(150%);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            backdrop-filter: blur(10px);
+            max-width: 400px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: rgba(76, 201, 240, 0.9);
+            border-left: 5px solid #38b000;
+        }
+
+        .notification.error {
+            background: rgba(247, 37, 133, 0.9);
+            border-left: 5px solid #d00000;
+        }
+
+        .notification i {
+            font-size: 1.8rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .sidebar {
+                width: 240px;
+            }
+            .main-content {
+                margin-left: 240px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+            }
+            .sidebar-header h1, .nav-item span {
+                display: none;
+            }
+            .sidebar-header {
+                justify-content: center;
+                padding: 0 15px 25px;
+            }
+            .nav-item {
+                justify-content: center;
+                padding: 16px;
+                margin: 5px 10px;
+            }
+            .nav-item i {
+                margin-right: 0;
+                font-size: 1.5rem;
+            }
+            .main-content {
+                margin-left: 80px;
+                padding: 25px;
+            }
+            .dashboard-cards {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
+            .main-content {
+                padding: 20px;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            .user-profile {
+                width: 100%;
+                justify-content: center;
+            }
+            .section {
+                padding: 25px;
+            }
+            .modal-content {
+                width: 95%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .form-buttons {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            .actions {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Menú lateral -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">E</div>
+            <h1>Empleados</h1>
+        </div>
+        <div class="nav-links">
+            <div class="nav-item active" data-section="dashboard">
+                <i class="fas fa-chart-line"></i>
+                <span>Dashboard</span>
+            </div>
+            <div class="nav-item" data-section="employees">
+                <i class="fas fa-users"></i>
+                <span>Empleados</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-chart-pie"></i>
+                <span>Reportes</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-cog"></i>
+                <span>Configuración</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Contenido principal -->
+    <main class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <h2>Dashboard de Empleados</h2>
+            <div class="header-actions">
+                <button class="btn btn-primary" id="add-employee-btn">
+                    <i class="fas fa-plus"></i> Nuevo Empleado
+                </button>
+                <div class="user-profile">
+                    <div class="user-avatar">A</div>
+                    <div class="user-info">
+                        <div class="user-name">Admin User</div>
+                        <div class="user-role">Administrador</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjetas de dashboard -->
+        <div id="dashboard-section">
+            <div class="dashboard-cards">
+                <div class="card card-employees">
+                    <div class="card-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3>Total Empleados</h3>
+                    <div class="value" id="total-employees">0</div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i> +5% desde el mes pasado
+                    </div>
+                </div>
+                <div class="card card-positions">
+                    <div class="card-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <h3>Posiciones</h3>
+                    <div class="value" id="total-positions">0</div>
+                    <div class="trend up">
+                        <i class="fas fa-plus"></i> 3 nuevas posiciones
+                    </div>
+                </div>
+                <div class="card card-salary">
+                    <div class="card-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <h3>Salario Promedio</h3>
+                    <div class="value" id="avg-salary">$0</div>
+                    <div class="trend up">
+                        <i class="fas fa-arrow-up"></i> +2% desde el mes pasado
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de empleados en dashboard -->
+            <div class="section">
+                <div class="section-header">
+                    <h3 class="section-title">Últimos Empleados</h3>
+                    <button class="btn btn-sm btn-primary" id="view-all-btn">
+                        <i class="fas fa-eye"></i> Ver Todos
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table id="employees-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Puesto</th>
+                                <th>Salario</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="employees-table-body">
+                            <tr>
+                                <td colspan="5" class="loading">
+                                    <div class="spinner"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de empleados (oculta inicialmente) -->
+        <div id="employees-section" class="hidden">
+            <div class="section">
+                <div class="section-header">
+                    <h3 class="section-title">Gestión de Empleados</h3>
+                    <button class="btn btn-sm btn-primary" id="add-employee-btn2">
+                        <i class="fas fa-plus"></i> Nuevo Empleado
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table id="full-employees-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Puesto</th>
+                                <th>Salario</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="full-employees-table-body">
+                            <tr>
+                                <td colspan="5" class="loading">
+                                    <div class="spinner"></div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para añadir empleado -->
+        <div class="modal" id="add-employee-modal">
+            <div class="modal-overlay" id="close-add-modal"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Añadir Nuevo Empleado</h3>
+                    <div class="close-modal" id="close-add-modal-btn">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <form id="employee-form">
+                        <div class="form-group">
+                            <label for="name">Nombre Completo</label>
+                            <input type="text" id="name" name="name" required placeholder="Ej: Juan Pérez">
+                        </div>
+                        <div class="form-group">
+                            <label for="position">Puesto</label>
+                            <input type="text" id="position" name="position" required placeholder="Ej: Desarrollador Frontend">
+                        </div>
+                        <div class="form-group">
+                            <label for="salary">Salario</label>
+                            <input type="number" id="salary" name="salary" required placeholder="Ej: 3000">
+                        </div>
+                        <div class="form-buttons">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Guardar Empleado
+                            </button>
+                            <button type="button" class="btn btn-cancel" id="cancel-add">
+                                <i class="fas fa-times"></i> Cancelar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal para editar empleado -->
+        <div class="modal" id="edit-employee-modal">
+            <div class="modal-overlay" id="close-edit-modal"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Editar Empleado</h3>
+                    <div class="close-modal" id="close-edit-modal-btn">
+                        <i class="fas fa-times"></i>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <form id="edit-form">
+                        <input type="hidden" id="edit-id">
+                        <div class="form-group">
+                            <label for="edit-name">Nombre</label>
+                            <input type="text" id="edit-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-position">Puesto</label>
+                            <input type="text" id="edit-position" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-salary">Salario</label>
+                            <input type="number" id="edit-salary" required>
+                        </div>
+                        <div class="form-buttons">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-sync-alt"></i> Actualizar
+                            </button>
+                            <button type="button" class="btn btn-cancel" id="cancel-edit">
+                                <i class="fas fa-times"></i> Cancelar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notificación -->
+        <div id="notification" class="notification">
+            <i class="fas fa-check-circle"></i>
+            <span>Operación realizada con éxito</span>
+        </div>
+    </main>
+
+    <script>
+        // Variables globales
+        const API_URL = 'https://api-rest-simple-vercel-and-supabase.vercel.app';
+        let employees = [];
+        let currentEditId = null;
+
+        // Elementos del DOM
+        const sections = {
+            dashboard: document.getElementById('dashboard-section'),
+            employees: document.getElementById('employees-section'),
+        };
+
+        const modals = {
+            add: document.getElementById('add-employee-modal'),
+            edit: document.getElementById('edit-employee-modal')
+        };
+
+        const navItems = document.querySelectorAll('.nav-item');
+        const viewAllBtn = document.getElementById('view-all-btn');
+        const addEmployeeBtns = document.querySelectorAll('#add-employee-btn, #add-employee-btn2');
+        const closeAddModalBtns = document.querySelectorAll('#close-add-modal, #close-add-modal-btn, #cancel-add');
+        const closeEditModalBtns = document.querySelectorAll('#close-edit-modal, #close-edit-modal-btn, #cancel-edit');
+        const employeeForm = document.getElementById('employee-form');
+        const editForm = document.getElementById('edit-form');
+        const notification = document.getElementById('notification');
+
+        // Funciones de utilidad
+        function showNotification(message, isSuccess = true) {
+            notification.querySelector('span').textContent = message;
+            notification.className = `notification ${isSuccess ? 'success' : 'error'} show`;
+            
+            // Cambiar ícono según el tipo
+            const icon = notification.querySelector('i');
+            icon.className = isSuccess ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+            
+            setTimeout(() => {
+                notification.className = notification.className.replace('show', '');
+            }, 4000);
+        }
+
+        function showSection(sectionName) {
+            // Ocultar todas las secciones
+            Object.values(sections).forEach(section => {
+                if (section) section.classList.add('hidden');
+            });
+            
+            // Mostrar la sección seleccionada
+            if (sections[sectionName]) {
+                sections[sectionName].classList.remove('hidden');
+            }
+            
+            // Actualizar navegación activa
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.dataset.section === sectionName) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        function showModal(modalName) {
+            modals[modalName].classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalName) {
+            modals[modalName].classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function closeAllModals() {
+            Object.values(modals).forEach(modal => {
+                modal.classList.remove('active');
+            });
+            document.body.style.overflow = '';
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('es-ES', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2
+            }).format(amount);
+        }
+
+        // Funciones para cargar datos
+        async function loadEmployees() {
+            try {
+                // Mostrar carga
+                const tableBody = document.getElementById('employees-table-body');
+                const fullTableBody = document.getElementById('full-employees-table-body');
+                tableBody.innerHTML = '<tr><td colspan="5" class="loading"><div class="spinner"></div></td></tr>';
+                fullTableBody.innerHTML = '<tr><td colspan="5" class="loading"><div class="spinner"></div></td></tr>';
+                
+                // Obtener datos de la API
+                const response = await fetch(`${API_URL}/empleados`);
+                employees = await response.json();
+                
+                // Actualizar tarjetas
+                document.getElementById('total-employees').textContent = employees.length;
+                
+                // Calcular puestos únicos
+                const positions = [...new Set(employees.map(e => e.puesto))];
+                document.getElementById('total-positions').textContent = positions.length;
+                
+                // Calcular salario promedio
+                const totalSalary = employees.reduce((sum, emp) => sum + parseFloat(emp.salario), 0);
+                const avgSalary = totalSalary / employees.length;
+                document.getElementById('avg-salary').textContent = formatCurrency(avgSalary || 0);
+                
+                // Renderizar tabla en dashboard (solo últimos 5)
+                renderEmployeesTable(employees.slice(0, 5), tableBody);
+                
+                // Renderizar tabla completa
+                renderEmployeesTable(employees, fullTableBody);
+                
+            } catch (error) {
+                console.error('Error cargando empleados:', error);
+                showNotification('Error cargando empleados', false);
+                
+                // Mostrar mensaje de error
+                const tableBody = document.getElementById('employees-table-body');
+                const fullTableBody = document.getElementById('full-employees-table-body');
+                tableBody.innerHTML = '<tr><td colspan="5">Error cargando datos. Intente nuevamente.</td></tr>';
+                fullTableBody.innerHTML = '<tr><td colspan="5">Error cargando datos. Intente nuevamente.</td></tr>';
+            }
+        }
+
+        function renderEmployeesTable(employeesData, tableBody) {
+            if (!employeesData || employeesData.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5">No hay empleados registrados</td></tr>';
+                return;
+            }
+            
+            tableBody.innerHTML = employeesData.map(employee => `
+                <tr>
+                    <td>${employee.id}</td>
+                    <td>${employee.nombre}</td>
+                    <td>${employee.puesto}</td>
+                    <td>${formatCurrency(employee.salario)}</td>
+                    <td class="actions">
+                        <div class="action-btn edit-btn" data-id="${employee.id}">
+                            <i class="fas fa-edit"></i>
+                        </div>
+                        <div class="action-btn delete-btn" data-id="${employee.id}">
+                            <i class="fas fa-trash"></i>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+            
+            // Agregar eventos a los botones
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', () => openEditModal(btn.dataset.id));
+            });
+            
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', () => deleteEmployee(btn.dataset.id));
+            });
+        }
+
+        // Funciones CRUD
+        async function addEmployee(employeeData) {
+            try {
+                const response = await fetch(`${API_URL}/empleados`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(employeeData)
+                });
+                
+                if (response.ok) {
+                    showNotification('Empleado añadido con éxito');
+                    employeeForm.reset();
+                    loadEmployees();
+                    closeModal('add');
+                } else {
+                    throw new Error('Error al añadir empleado');
+                }
+            } catch (error) {
+                console.error('Error añadiendo empleado:', error);
+                showNotification('Error añadiendo empleado', false);
+            }
+        }
+
+        async function updateEmployee(id, employeeData) {
+            try {
+                const response = await fetch(`${API_URL}/empleados/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(employeeData)
+                });
+                
+                if (response.ok) {
+                    showNotification('Empleado actualizado con éxito');
+                    loadEmployees();
+                    closeModal('edit');
+                } else {
+                    throw new Error('Error al actualizar empleado');
+                }
+            } catch (error) {
+                console.error('Error actualizando empleado:', error);
+                showNotification('Error actualizando empleado', false);
+            }
+        }
+
+        async function deleteEmployee(id) {
+            if (!confirm('¿Estás seguro de que quieres eliminar este empleado?')) return;
+            
+            try {
+                const response = await fetch(`${API_URL}/empleados/${id}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    showNotification('Empleado eliminado con éxito');
+                    loadEmployees();
+                } else {
+                    throw new Error('Error al eliminar empleado');
+                }
+            } catch (error) {
+                console.error('Error eliminando empleado:', error);
+                showNotification('Error eliminando empleado', false);
+            }
+        }
+
+        // Funciones para el modal de edición
+        function openEditModal(id) {
+            const employee = employees.find(e => e.id == id);
+            if (!employee) return;
+            
+            document.getElementById('edit-id').value = employee.id;
+            document.getElementById('edit-name').value = employee.nombre;
+            document.getElementById('edit-position').value = employee.puesto;
+            document.getElementById('edit-salary').value = employee.salario;
+            
+            showModal('edit');
+        }
+
+        function openAddModal() {
+            employeeForm.reset();
+            showModal('add');
+        }
+
+        // Event Listeners
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                if (item.dataset.section) {
+                    showSection(item.dataset.section);
+                }
+            });
+        });
+
+        viewAllBtn.addEventListener('click', () => {
+            showSection('employees');
+        });
+
+        addEmployeeBtns.forEach(btn => {
+            btn.addEventListener('click', openAddModal);
+        });
+
+        closeAddModalBtns.forEach(btn => {
+            btn.addEventListener('click', () => closeModal('add'));
+        });
+
+        closeEditModalBtns.forEach(btn => {
+            btn.addEventListener('click', () => closeModal('edit'));
+        });
+
+        employeeForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const employeeData = {
+                nombre: document.getElementById('name').value,
+                puesto: document.getElementById('position').value,
+                salario: parseFloat(document.getElementById('salary').value)
+            };
+            
+            addEmployee(employeeData);
+        });
+
+        editForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const employeeData = {
+                nombre: document.getElementById('edit-name').value,
+                puesto: document.getElementById('edit-position').value,
+                salario: parseFloat(document.getElementById('edit-salary').value)
+            };
+            
+            const id = document.getElementById('edit-id').value;
+            updateEmployee(id, employeeData);
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeAllModals();
+            }
+        });
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', () => {
+            loadEmployees();
+            showSection('dashboard');
+            
+            // Agregar efecto de carga inicial
+            setTimeout(() => {
+                document.body.classList.add('loaded');
+            }, 800);
+        });
+    </script>
+</body>
+</html>
